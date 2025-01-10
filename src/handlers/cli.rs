@@ -14,12 +14,12 @@ pub struct DitherustArgs {
 
     /// le mode d’opération
     #[argh(subcommand)]
-    pub mode: Mode
+    pub mode: DitherustMode
 }
 
 #[derive(Debug, Clone, PartialEq, FromArgs)]
 #[argh(subcommand)]
-pub enum Mode {
+pub enum DitherustMode {
     Seuil(OptsSeuil),
     Palette(OptsPalette),
 }
