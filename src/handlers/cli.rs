@@ -22,12 +22,20 @@ pub struct DitherustArgs {
 pub enum DitherustMode {
     Seuil(OptsSeuil),
     Palette(OptsPalette),
+    TramageAleatoire(OptsTramageAleatoire)
 }
 
 #[derive(Debug, Clone, PartialEq, FromArgs)]
 #[argh(subcommand, name="seuil")]
 /// Rendu de l’image par seuillage monochrome.
-pub struct OptsSeuil {}
+pub struct OptsSeuil {
+    #[argh(option)]
+    /// la première couleur (en hexadécimal) à utiliser (ex: 777777)
+    pub couleur_1: Option<String>,
+    #[argh(option)]
+    /// la deuxième couleur (en hexadécimal) à utiliser (ex: 333333)
+    pub couleur_2: Option<String>
+}
 
 
 #[derive(Debug, Clone, PartialEq, FromArgs)]
@@ -37,5 +45,10 @@ pub struct OptsPalette {
 
     /// le nombre de couleurs à utiliser, dans la liste [NOIR, BLANC, ROUGE, VERT, BLEU, JAUNE, CYAN, MAGENTA]
     #[argh(option)]
-    nb_couleurs: usize
+    pub nb_couleurs: usize
 }
+
+#[derive(Debug, Clone, PartialEq, FromArgs)]
+#[argh(subcommand, name="tramage_aleatoire")]
+/// Rendu de l’image par tramage aléatoire.
+pub struct OptsTramageAleatoire {}
