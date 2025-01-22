@@ -57,4 +57,4 @@ GROS BLANC
 
 ### Détails sur la représentation de l'erreur
 
-GROS BLANC *2
+GROS BLANC * 2
