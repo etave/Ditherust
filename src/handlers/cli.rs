@@ -23,6 +23,7 @@ pub enum DitherustMode {
     Palette(OptsPalette),
     TramageAleatoire(OptsTramageAleatoire),
     TramageBayer(OptsTramageBayer),
+    DiffusionErreur(OptsDiffusionErreur),
 }
 
 #[derive(Debug, Clone, PartialEq, FromArgs)]
@@ -55,7 +56,12 @@ pub struct OptsTramageAleatoire {}
 #[argh(subcommand, name = "tramage_bayer")]
 /// Rendu de l’image par tramage Bayer.
 pub struct OptsTramageBayer {
-    /// l'ordre de la matrice de Bayer
+    /// l'ordre de la matrice de Bayer (conseillé: 2, max: 10 (> 10: overflow))
     #[argh(positional)]
     pub ordre: u32,
 }
+
+#[derive(Debug, Clone, PartialEq, FromArgs)]
+#[argh(subcommand, name = "diffusion_erreur")]
+/// Rendu de l’image par diffusion d'erreur.
+pub struct OptsDiffusionErreur {}

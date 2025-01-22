@@ -1,6 +1,7 @@
 use ditherust::constants::{BLACK, BLUE, CYAN, GREEN, MAGENTA, RED, WHITE, YELLOW};
 use ditherust::handlers::{DitherustArgs, DitherustMode};
 use ditherust::io::file::{open_image, write_image};
+use ditherust::processors::diffusion_erreur::diffusion_erreur;
 use ditherust::processors::palette::palette;
 use ditherust::processors::seuil::seuillage;
 use ditherust::processors::tramage_aleatoire::tramage_aleatoire;
@@ -55,7 +56,15 @@ fn main() -> Result<(), ImageError> {
             tramage_aleatoire(&mut image);
         }
         DitherustMode::TramageBayer(option) => {
+            if option.ordre > 10 {
+                // TODO: utiliser une erreur personnalisée
+                panic!("L'ordre de la matrice de Bayer doit être inférieur ou égal à 10 pour éviter les overflows");
+            }
+
             tramage_bayer(&mut image, option.ordre);
+        }
+        DitherustMode::DiffusionErreur(_) => {
+            diffusion_erreur(&mut image);
         }
     }
 
