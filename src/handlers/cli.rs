@@ -42,7 +42,7 @@ pub struct OptsSeuil {
 #[argh(subcommand, name = "palette")]
 /// Rendu de l’image avec une palette contenant un nombre limité de couleurs
 pub struct OptsPalette {
-    /// le nombre de couleurs à utiliser, dans la liste [NOIR, BLANC, ROUGE, VERT, BLEU, JAUNE, CYAN, MAGENTA]
+    /// le nombre de couleurs à utiliser, dans la liste [NOIR, BLANC, ROUGE, VERT, BLEU, JAUNE, CYAN, MAGENTA] (dans cet ordre de 1 à 8)
     #[argh(option)]
     pub nb_couleurs: usize,
 }

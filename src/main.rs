@@ -1,20 +1,28 @@
 use ditherust::constants::{BLACK, BLUE, CYAN, GREEN, MAGENTA, RED, WHITE, YELLOW};
 use ditherust::handlers::{DitherustArgs, DitherustMode};
+use ditherust::errors::DitherustError;
 use ditherust::io::file::{open_image, write_image};
 use ditherust::processors::diffusion_erreur::diffusion_erreur;
 use ditherust::processors::palette::palette;
 use ditherust::processors::seuil::seuillage;
 use ditherust::processors::tramage_aleatoire::tramage_aleatoire;
 use ditherust::processors::tramage_bayer::tramage_bayer;
-use image::{DynamicImage, ImageError, Rgba};
+use image::{DynamicImage, Rgba};
 
-fn main() -> Result<(), ImageError> {
+fn main() {
+    match run() {
+        Ok(_) => {}
+        Err(error) => eprintln!("Error: {}", error),
+    }
+}
+
+fn run() -> Result<(), Box<dyn std::error::Error>> {
     let args: DitherustArgs = argh::from_env();
     let path_in = args.input;
 
     let mut image: DynamicImage = match open_image(&path_in) {
         Ok(image) => image,
-        Err(error) => return Err(error),
+        Err(error) => return Err(Box::new(error)),
     };
 
     let output_path = match args.output {
@@ -38,15 +46,14 @@ fn main() -> Result<(), ImageError> {
                 || !couleur_1.chars().all(|c| c.is_digit(16))
                 || !couleur_2.chars().all(|c| c.is_digit(16))
             {
-                panic!("Les couleurs doivent être des codes hexadécimaux de 6 chiffres");
+                return Err(Box::new(DitherustError::InvalidColorFormat));
             }
 
             seuillage(&mut image, &couleur_1, &couleur_2);
         }
         DitherustMode::Palette(option) => {
-            if option.nb_couleurs < 1 || option.nb_couleurs > 9 {
-                // TODO: utiliser une erreur personnalisée
-                panic!("Le nombre de couleurs doit être compris entre 1 et 9");
+            if option.nb_couleurs < 1 || option.nb_couleurs > 8 {
+                return Err(Box::new(DitherustError::InvalidColorCount(option.nb_couleurs.try_into().unwrap())));
             }
 
             let colors: Vec<Rgba<u8>> = vec![BLACK, WHITE, RED, GREEN, BLUE, YELLOW, CYAN, MAGENTA];
@@ -57,8 +64,7 @@ fn main() -> Result<(), ImageError> {
         }
         DitherustMode::TramageBayer(option) => {
             if option.ordre > 10 {
-                // TODO: utiliser une erreur personnalisée
-                panic!("L'ordre de la matrice de Bayer doit être inférieur ou égal à 10 pour éviter les overflows");
+                return Err(Box::new(DitherustError::InvalidBayerOrder(option.ordre.try_into().unwrap())));
             }
 
             tramage_bayer(&mut image, option.ordre);
@@ -70,7 +76,7 @@ fn main() -> Result<(), ImageError> {
 
     match write_image(&output_path, &image) {
         Ok(_) => {}
-        Err(error) => return Err(error),
+        Err(error) => return Err(Box::new(error)),
     }
 
     return Ok(());
