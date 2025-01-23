@@ -64,4 +64,11 @@ pub struct OptsTramageBayer {
 #[derive(Debug, Clone, PartialEq, FromArgs)]
 #[argh(subcommand, name = "diffusion_erreur")]
 /// Rendu de l’image par diffusion d'erreur.
-pub struct OptsDiffusionErreur {}
+pub struct OptsDiffusionErreur {
+    /// le mode de diffusion d'erreur à utiliser ("normal" ou "floyd-steinberg")
+    #[argh(option)]
+    pub mode: Option<String>,
+    /// le nombre de couleurs à utiliser, dans la liste [NOIR, BLANC, ROUGE, VERT, BLEU, JAUNE, CYAN, MAGENTA] (dans cet ordre de 1 à 8)
+    #[argh(option)]
+    pub nb_couleurs: Option<usize>,
+}

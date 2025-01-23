@@ -5,6 +5,7 @@ pub enum DitherustError {
     InvalidColorFormat,
     InvalidColorCount(u8),
     InvalidBayerOrder(u8),
+    InvalidMode,
 }
 
 impl std::error::Error for DitherustError {}
@@ -26,6 +27,7 @@ impl fmt::Display for DitherustError {
                 "Ordre de Bayer invalide: {}. Doit être inférieur ou égal à 10 (pour éviter les overflows) (conseillé: 2)",
                 order
             ),
+            DitherustError::InvalidMode => write!(f, "Mode invalide, disponible: normal, floyd-steinberg"),
         }
     }
 }

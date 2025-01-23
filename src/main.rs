@@ -2,7 +2,7 @@ use ditherust::constants::{BLACK, BLUE, CYAN, GREEN, MAGENTA, RED, WHITE, YELLOW
 use ditherust::handlers::{DitherustArgs, DitherustMode};
 use ditherust::errors::DitherustError;
 use ditherust::io::file::{open_image, write_image};
-use ditherust::processors::diffusion_erreur::diffusion_erreur;
+use ditherust::processors::diffusion_erreur::{diffusion_erreur, diffusion_erreur_palette};
 use ditherust::processors::palette::palette;
 use ditherust::processors::seuil::seuillage;
 use ditherust::processors::tramage_aleatoire::tramage_aleatoire;
@@ -27,7 +27,7 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
 
     let output_path = match args.output {
         Some(path) => path,
-        None => "output.png".to_string(),
+        None => "out.png".to_string(),
     };
     match args.mode {
         DitherustMode::Seuil(option) => {
@@ -69,8 +69,42 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
 
             tramage_bayer(&mut image, option.ordre);
         }
-        DitherustMode::DiffusionErreur(_) => {
-            diffusion_erreur(&mut image);
+        DitherustMode::DiffusionErreur(option) => {
+            match option.nb_couleurs {
+                Some(nb_couleurs) => {
+                    if nb_couleurs < 1 || nb_couleurs > 8 {
+                        return Err(Box::new(DitherustError::InvalidColorCount(nb_couleurs.try_into().unwrap())));
+                    }
+        
+                    let colors: Vec<Rgba<u8>> = vec![BLACK, WHITE, RED, GREEN, BLUE, YELLOW, CYAN, MAGENTA];
+                    let selected_colors = colors[0..nb_couleurs].to_vec();
+        
+                    match option.mode.as_deref() {
+                        Some("floyd-steinberg") => {
+                            diffusion_erreur_palette(&mut image, selected_colors, true);
+                        }
+                        Some("normal") | None => {
+                            diffusion_erreur_palette(&mut image, selected_colors, false);
+                        }
+                        Some(_) => {
+                            return Err(Box::new(DitherustError::InvalidMode));
+                        }
+                    }
+                }
+                None => {
+                    match option.mode.as_deref() {
+                        Some("floyd-steinberg") => {
+                            diffusion_erreur(&mut image, true);
+                        }
+                        Some("normal") | None => {
+                            diffusion_erreur(&mut image, false);
+                        }
+                        Some(_) => {
+                            return Err(Box::new(DitherustError::InvalidMode));
+                        }
+                    }
+                }
+            }
         }
     }
 
