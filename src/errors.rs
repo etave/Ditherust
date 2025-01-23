@@ -27,7 +27,7 @@ impl fmt::Display for DitherustError {
                 "Ordre de Bayer invalide: {}. Doit être inférieur ou égal à 10 (pour éviter les overflows) (conseillé: 2)",
                 order
             ),
-            DitherustError::InvalidMode => write!(f, "Mode invalide, disponible: normal, floyd-steinberg"),
+            DitherustError::InvalidMode => write!(f, "Mode invalide, disponible: simple, floyd-steinberg, jarvis-judice-ninke, atkinson"),
         }
     }
 }

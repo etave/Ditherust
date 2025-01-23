@@ -38,44 +38,43 @@ ditherust input.png output.png tramage_bayer 2 # Matrice d'ordre 2
 ditherust input.png output.png tramage_bayer 4 # Matrice d'ordre 4
 
 # Diffusion d'erreur
-ditherust input.png output.png diffusion_erreur # Mode normal par défaut
-ditherust input.png output.png diffusion_erreur --mode floyd-steinberg # Mode Floyd-Steinberg
+ditherust input.png output.png diffusion_erreur # Mode simple par défaut
+ditherust input.png output.png diffusion_erreur --mode floyd-steinberg # Mode Floyd-Steinberg (autre mode possible : simple, jarvis-judice-ninke, atkinson)
 ditherust input.png output.png diffusion_erreur --nb_couleurs 4 # Avec palette limitée
-ditherust input.png output.png diffusion_erreur --nb_couleurs 4 --mode floyd-steinberg # Avec palette limitée et mode Floyd-Steinberg
+ditherust input.png output.png diffusion_erreur --nb_couleurs 4 --mode floyd-steinberg # Avec palette limitée et mode Floyd-Steinberg (autre mode possible : simple, jarvis-judice-ninke, atkinson)
 ```
 
 ### Qu'est-ce qu'une DynamicImage ?
 
-Une DynamicImage est un ``` enum ``` qui permet de représenter une image de manière dynamique.
+Une DynamicImage est un `enum` qui permet de représenter une image de manière dynamique.
 Elle est utilisée pour représenter une image en mémoire, et peut être convertie en différents formats (RGB, RGBA, Luma, ...).
 
 ### Conversion d'une DynamicImage en rgb8
 
-Une image DynamicImage peut être simplement convertit en rgb8 grâce à la fonction associée. 
-Prenons une ``` DynamicImage image1 ```:
+Une image DynamicImage peut être simplement convertie en rgb8 grâce à la fonction associée. 
+Prenons une `DynamicImage image1` :
 
 ```rust
- let image1: DynamicImage = ImageReader::open("image.png")?.decode()?;
+let image1: DynamicImage = ImageReader::open("myimage.png")?.decode()?;
 ```
 
-On la convertit simplement avec la fonction ```.to_rgb8()``` :
+On la convertit simplement avec la fonction `.to_rgb8()` :
 
 ```rust
 let img_rgb8: RgbImage = image1.to_rgb8();
 ```
 
-**A NOTER** : Dans notre projet, nous utilisons l'image sous sa forme d'origine (rgba8), sans la convertir en rgb8. Par exemple, dans le fichier ```seuil.rs``` (dossier processors), la fonction ``` seuillage ``` remplace les pixels de l'image 1 à 1, sans jamais convertir l'image en rgb8.
+**À NOTER** : Dans notre projet, nous utilisons l'image sous sa forme d'origine (rgba8), sans la convertir en rgb8. Par exemple, dans le fichier `seuil.rs` (dossier processors), la fonction `seuillage` remplace les pixels de l'image un à un, sans jamais convertir l'image en rgb8.
 
 ### Réponse à la question 3
 
-Premièrement, pour sauvegarder l'image, ici sous format png, on utilise ``` image1.save("nomdufichierdesortie") ```:
+Premièrement, pour sauvegarder l'image, ici sous format png, on utilise `image1.save("nomdufichierdesortie")` :
 
 io/file.rs (l.8)
 
-/main.rs (l.60)
+main.rs (l.60)
 
-
-Deuxièmement, si l'image **d'origine** (avant conversion ``` .to_rgb8()``` ) incluait un canal alpha, après sa conversion, il aura été supprimé et toutes les zones transparentes seront désormais opaques.
+Deuxièmement, si l'image **d'origine** (avant conversion `.to_rgb8()`) incluait un canal alpha, après sa conversion, il aura été supprimé et toutes les zones transparentes seront désormais opaques.
 
 ### Comment récupérer la luminosité d'un pixel
 
@@ -89,11 +88,10 @@ Cette fonction va transformer un pixel en luminosité, c'est-à-dire en une vale
 
 ### Détails du calcul entre 2 couleurs
 
-La fonction ``` distance_between_colors ``` peut être retrouvé ici :
+La fonction `distance_between_colors` peut être retrouvée ici :
 
 ```rust
 fn distance_between_colors(color1: &Rgba<u8>, color2: &Rgba<u8>) -> f64 {
-
     let red_diff = color1[0] as f64 - color2[0] as f64;
     let green_diff = color1[1] as f64 - color2[1] as f64;
     let blue_diff = color1[2] as f64 - color2[2] as f64;
@@ -104,17 +102,15 @@ fn distance_between_colors(color1: &Rgba<u8>, color2: &Rgba<u8>) -> f64 {
 
 Simplement, elle reproduit le calcul d'une distance euclidienne, ce qui revient à calculer la distance entre 2 points dans un espace à plusieurs dimensions.
 
-Plus en détails, chacunes des 3 étapes du calcul (englobé par la racine carré ``` .sqrt() ```) va calculer la différence entre le rouge de la couleur 1, le rouge de la couleur 2, puis la différence entre le vert de la couleur 1, etc.
-
+Plus en détail, chacune des 3 étapes du calcul (englobé par la racine carrée `.sqrt()`) va calculer la différence entre le rouge de la couleur 1, le rouge de la couleur 2, puis la différence entre le vert de la couleur 1, etc.
 
 ### Explication en cas de palette "vide"
 
-Pour gérer les palettes vides, nous avons mis en place des erreurs spécialisés. En effet, lorsque la palette est vide, c'est-à-dire ```--nb-couleurs 0```, le programme va rendre compte dans le terminal d'une erreur personnalisée précisant que la palette ne peut être vide :
+Pour gérer les palettes vides, nous avons mis en place des erreurs spécialisées. En effet, lorsque la palette est vide, c'est-à-dire `--nb-couleurs 0`, le programme va rendre compte dans le terminal d'une erreur personnalisée précisant que la palette ne peut être vide :
 
 processors/errors.rs (l.21) 
 
-Le message affiché est le suivant (une variable permet de remplir la partie vide), ``` "Nombre de couleurs invalide: {}. Doit être entre 1 et 8" ```
-
+Le message affiché est le suivant (une variable permet de remplir la partie vide) : `"Nombre de couleurs invalide: {}. Doit être entre 1 et 8"`
 
 ### Diffusion de l'erreur avec une palette de couleurs
 

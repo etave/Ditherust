@@ -65,7 +65,7 @@ pub struct OptsTramageBayer {
 #[argh(subcommand, name = "diffusion_erreur")]
 /// Rendu de l’image par diffusion d'erreur.
 pub struct OptsDiffusionErreur {
-    /// le mode de diffusion d'erreur à utiliser ("normal" ou "floyd-steinberg")
+    /// le mode de diffusion d'erreur à utiliser ("simple", "floyd-steinberg", "jarvis-judice-ninke", "atkinson")
     #[argh(option)]
     pub mode: Option<String>,
     /// le nombre de couleurs à utiliser, dans la liste [NOIR, BLANC, ROUGE, VERT, BLEU, JAUNE, CYAN, MAGENTA] (dans cet ordre de 1 à 8)
