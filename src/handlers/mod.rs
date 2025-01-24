@@ -1,2 +1,2 @@
 mod cli;
-pub use cli::DitherustArgs;
+pub use cli::{DitherustArgs, DitherustMode};

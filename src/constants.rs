@@ -1,11 +1,11 @@
-use image::Rgb;
+use image::Rgba;
 
-const WHITE: Rgb<u8> = Rgb([255, 255, 255]);
-const GREY: Rgb<u8> = Rgb([127, 127, 127]);
-const BLACK: Rgb<u8> = Rgb([0, 0, 0]);
-const BLUE: Rgb<u8> = Rgb([0, 0, 255]);
-const RED: Rgb<u8> = Rgb([255, 0, 0]);
-const GREEN: Rgb<u8> = Rgb([0, 255, 0]);
-const YELLOW: Rgb<u8> = Rgb([255, 255, 0]);
-const MAGENTA: Rgb<u8> = Rgb([255, 0, 255]);
-const CYAN: Rgb<u8> = Rgb([0, 255, 255]);
+pub const WHITE: Rgba<u8> = Rgba([255, 255, 255, 255]);
+pub const GREY: Rgba<u8> = Rgba([127, 127, 127, 255]);
+pub const BLACK: Rgba<u8> = Rgba([0, 0, 0, 255]);
+pub const BLUE: Rgba<u8> = Rgba([0, 0, 255, 255]);
+pub const RED: Rgba<u8> = Rgba([255, 0, 0, 255]);
+pub const GREEN: Rgba<u8> = Rgba([0, 255, 0, 255]);
+pub const YELLOW: Rgba<u8> = Rgba([255, 255, 0, 255]);
+pub const MAGENTA: Rgba<u8> = Rgba([255, 0, 255, 255]);
+pub const CYAN: Rgba<u8> = Rgba([0, 255, 255, 255]);
